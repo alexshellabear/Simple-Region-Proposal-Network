@@ -99,8 +99,6 @@ class dataset_generator():
 
             Assumption 1: There is only [0,1] objects in each frame
             Assumption 2: There is only one anchor box per anchor point
-
-            TODO 1: Account for no objects, half done
         """
         if self.has_video_already_been_processed(video_file_path):
             return None
