@@ -25,14 +25,13 @@ class custom_model():
         self.backbone_classifier_input_shape = config["ModelInputSize"]
         self.backbone_output_channels = config["BackboneClassifier"].layers[-1].output_shape[-1]
         self.history = None
-
+        
         self.models_folder = config["ModelsFolder"]
         if not os.path.exists(self.models_folder):
             os.mkdir(self.models_folder)
         
         self.build_region_classifier()
-
-        self.load_model()
+        self.model_weights_loaded = self.load_model() 
 
     def predict(self,input_array,threshold=0.9):
         """
@@ -166,7 +165,7 @@ class custom_model():
 
     def train(self,x_data,y_data,mode="use loaded model"):
         """Trains and saves the best model""" 
-        if self.model == None and mode == "use loaded model":
+        if self.model_weights_loaded == False and mode == "use loaded model":
             # Create folder to save models
             training_folder = f"{self.models_folder}{os.sep}{self.get_todays_datetime_as_string()}"
             if not os.path.exists(training_folder):

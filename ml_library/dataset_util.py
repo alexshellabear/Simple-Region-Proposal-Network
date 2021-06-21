@@ -1,4 +1,5 @@
 import os
+import random
 import cv2
 import numpy as np
 import pickle
@@ -169,6 +170,7 @@ class dataset_generator():
                 })
 
             print(f"[{index}/{int(cap.get(cv2.CAP_PROP_FRAME_COUNT))}] max iou={max(iou_list)}, coord {iou_list.index(max(iou_list))}")
+        cv2.destroyAllWindows()
 
     @staticmethod # Call this function when you don't initialise the class, means you don't pass the self variable
     def gen_debug_image_and_display(resized_frame,final_mask,final_result,anchor_point_overlay_display_img,coord_in_f_map,feature_to_input,wait_time_ms = 10):
@@ -291,6 +293,12 @@ class dataset_generator():
         y = int(round((coord_in_input_space["y"] + input_to_feature["y_offset"])*input_to_feature["y_scale"]))
         coord_in_feature_map = {"x":x,"y":y}
         return coord_in_feature_map
+
+    def get_n_random_rows(self,n_random_rows):
+        """Gets n random rows from the dataset"""
+        return random.sample(self.dataset, n_random_rows)
+
+
 
 def get_red_box(resized_frame,threshold_area = 400):
     """

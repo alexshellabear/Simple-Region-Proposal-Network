@@ -52,7 +52,7 @@
 import cv2
 from keras import applications
 import numpy as np
-
+import random
 from ml_library import dataset_util
 from ml_library.cust_model import custom_model
 
@@ -61,8 +61,8 @@ if __name__ == "__main__":
 
     # Set up config files, currently all relative file paths.
     config = { 
-        "ProcessedDatasetFolder" : r"\2. Processed Datasets"
-        ,"ModelsFolder" : r"\3. Models"
+        "ProcessedDatasetFolder" : r".\2. Processed Datasets"
+        ,"ModelsFolder" : r".\3. Models"
         ,"ModelInputSize" : (224,224)
         ,"VideoFiles" : {
             "ObjectVideoPath" : r"1. Binary Classifier Data\object.mp4"
@@ -85,8 +85,8 @@ if __name__ == "__main__":
     region_classifer_model.train(x_data, y_data)
 
     # Predict on same dataset but truncate rows to reduce processing time
-    input_images = np.array([row["HumanFormat"]["InputImage"] for row in dataset.dataset if row["Meta"]["FrameIndex"]])
-    print("\r\nThis will take a while, on my computer ~80 seconds. Grab some popcorn\r\n")
+    random_selected_dataset = dataset.get_n_random_rows(20)
+    input_images = np.array([row["HumanFormat"]["InputImage"] for row in random_selected_dataset])
     bounding_boxes =  region_classifer_model.predict(input_images)
 
     # Display results and compare against ground truth and predictions
@@ -94,12 +94,12 @@ if __name__ == "__main__":
         bounding_boxes_in_img = [box["BoundingBox"] for box in bounding_boxes if box["ImageIndex"] == img_index]
         for box in bounding_boxes_in_img:
             cv2.rectangle(img,(box["x1"],box["y1"]),(box["x2"],box["y2"]),(255,255,255),2)
-        dataset_image_side_by_side = dataset.dataset[img_index]["HumanFormat"]["AllImagesSideBySide"]
+        dataset_image_side_by_side = random_selected_dataset[img_index]["HumanFormat"]["AllImagesSideBySide"]
 
         # Display images
         cv2.imshow("Predicted Bounding Box",img)
         cv2.imshow("Datset All Images Side By Side",dataset_image_side_by_side)
-        cv2.waitKey(250)
+        cv2.waitKey(1000)
     
     cv2.destroyAllWindows() # used to close the windows displaying images etc
 
